@@ -15,6 +15,17 @@ type cliCommand struct {
 
 type config struct {
 	commands map[string]cliCommand
+	pokeResponse ApiResponse
+}
+
+type ApiResponse struct {
+	Count    int     `json:"count"`
+	Next     *string `json:"next"`
+	Previous *string `json:"previous"`
+	Results  []struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"results"`
 }
 
 func mainREPL(config *config) {
@@ -41,20 +52,4 @@ func cleanInput(text string) []string {
 		trimmedFields[i] = strings.ToLower(v)
 	}
 	return trimmedFields
-}
-
-func commandExit(config *config) error {
-	fmt.Println("Closing the Pokedex... Goodbye!")
-	os.Exit(0)
-	return nil
-}
-
-func commandHelp(config *config) error {
-	fmt.Println("Welcome to the Pokedex!")
-	fmt.Println("Usage:")
-	fmt.Println()
-	for key, value := range getCommands() {
-		fmt.Printf("%s: %s\n", key, value.description)
-	}
-	return nil
 }
