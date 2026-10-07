@@ -5,20 +5,24 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/boutaj/pokedex/internal/pokecache"
 )
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, []string) error
 }
 
 type config struct {
-	commands map[string]cliCommand
-	pokeResponse ApiResponse
+	apiUrl       string
+	commands     map[string]cliCommand
+	pokeResponse MapApiResponse
+	cache        *pokecache.Cache
 }
 
-type ApiResponse struct {
+type MapApiResponse struct {
 	Count    int     `json:"count"`
 	Next     *string `json:"next"`
 	Previous *string `json:"previous"`
@@ -42,7 +46,9 @@ func mainREPL(config *config) {
 			fmt.Println("Unknown command")
 			continue
 		}
-		command.callback(config)
+		if err := command.callback(config, text[1:]); err != nil {
+			fmt.Println(err)
+		}
 	}
 }
 

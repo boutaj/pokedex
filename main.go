@@ -1,5 +1,11 @@
 package main
 
+import (
+	"time"
+
+	"github.com/boutaj/pokedex/internal/pokecache"
+)
+
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"exit": {
@@ -13,14 +19,19 @@ func getCommands() map[string]cliCommand {
 			callback:    commandHelp,
 		},
 		"map": {
-			name: "map",
+			name:        "map",
 			description: "Displays the names of next 20 location areas in the Pokemon",
-			callback: commandMap,
+			callback:    commandMap,
 		},
 		"mapb": {
-			name: "mapb",
+			name:        "mapb",
 			description: "Displays the names of previous 20 location areas in the Pokemon",
-			callback: commandMapb,
+			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore",
+			description: "List of all the Pokémon located there",
+			callback:    commandExplore,
 		},
 	}
 }
@@ -28,8 +39,10 @@ func getCommands() map[string]cliCommand {
 func main() {
 	url := "https://pokeapi.co/api/v2/location-area"
 	config := &config{
-		commands: getCommands(),
-		pokeResponse: ApiResponse{Next: &url},
+		apiUrl: url,
+		commands:     getCommands(),
+		pokeResponse: MapApiResponse{Next: &url},
+		cache:        pokecache.NewCache(5 * time.Minute),
 	}
 	mainREPL(config)
 }
