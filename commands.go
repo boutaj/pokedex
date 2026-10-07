@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"math/rand/v2"
 
 	"github.com/boutaj/pokedex/internal/pokecache"
 )
@@ -192,5 +193,21 @@ func commandExplore(config *config, args []string) error {
 		fmt.Println(" - " + names.Pokemon.Name)
 	}
 
+	return nil
+}
+
+func commandCatch(config *config, args []string) error {
+	if len(args) == 0 {
+		fmt.Println("usage: catch <pokemon_name>")
+		return nil
+	}
+	pokemon := args[0]
+	fmt.Printf("Throwing a Pokeball at %s...\n", pokemon)
+	randomInt := rand.IntN(100)
+	if randomInt < 10 || randomInt > 59 {
+		fmt.Printf("%s escaped!\n", pokemon)
+	} else {
+		fmt.Printf("%s was caught!\n", pokemon)
+	}
 	return nil
 }
